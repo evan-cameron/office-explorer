@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Equipment Guide</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="menu-state">Room Mode</div>
+    <div class="container">
+        <div id="room">
+            <div id="player"></div>
+            <div id="table-original"></div>
+            <div id="rectangle"></div>
+            <div id="tv"></div>
+            <div id="table-computer"></div>
+            <div id="computer"></div>
+            <!-- doors & windows -->
+            <div id="office-1" style="top: 0; left: 65%; width: 70px;">evan</div>
+            <div id="office-2" style="top: 0; left:48%; width: 70px;">nathan</div>
+
+            <!-- Right wall menus -->
+            <div class="menu-trigger wall-vertical v-shelf" style="right: 0; top: 18%;" data-menu="right1" data-category="Batteries, Cables, Adapters, Storage">Batteries, Cables, Power, Adapters, Keys</div>
+            <div class="menu-trigger wall-vertical v-shelf" style="right: 0; top: 60%;" data-menu="right2" data-category="Tape Cabinet">Film, Tape(s)</div>
+
+            <!-- Top wall menus -->
+            <div class="menu-trigger wall-horizontal shelf" style="top: 0; left: 3%;" data-menu="top1" data-category="Gimbals, Bolex, V-Mount Batteries">Bolexs, Gimbals, V-Mount Batteries</div>
+            <div class="menu-trigger wall-horizontal shelf" style="top: 0; left: 18%; background-color:#0066cc;" data-menu="proTripods" data-category="Pro Tripods">Pro Tripods, HDMI</div>
+            <div class="menu-trigger wall-horizontal shelf" style="top: 0; left: 30%;" data-menu="top2" data-category="Cinema Kits">Cinema Cameras</div>
+            <div class="menu-trigger wall-horizontal shelf" style="top: 0; left: 76%;" data-menu="top3" data-category="General Sign-out">General Sign-Out</div>
+            <div class="menu-trigger wall-horizontal shelf" style="top: 0; left: 91%;" background-color:#0066cc ; data-menu="tripods" data-category=" Tripods">Stands + Tripods</div>
+
+            <!-- Left wall menus -->
+            <div class="menu-trigger" style="left: 0; top: 40%; width: 45px; height: 45px;" data-menu="fridge" data-category="16mm Film Storage">Film</div>
+            <div id="fridge" style="width: 5.9%; height:10%">Fridge</div>
+            <div id="light-stand-cabinet"></div>
+            <div class="menu-trigger v-shelf" style="left: 0; top: 20%; " data-menu="stands" data-category="C-Stands & Light Stands">Stands</div>
+            <div class="menu-trigger wall-vertical v-shelf" style="left: 0; bottom: 10%;" data-menu="left1" data-category="Projectors, Vintage, Cables">DSLRs, MiniDV, Projectors</div>
+            
+            <!-- Bottom wall menus-->
+            <div class="menu-trigger wall-horizontal slider shelf" style="bottom: 0; left: 0%; background-color:#0066cc;;" data-menu="sliders" data-category="Cinema Tripods">Sliders</div>
+            <div class="menu-trigger wall-horizontal shelf" style="bottom: 0; left: 20%;" data-menu="bottom1" data-category="Audio Equipment">Sound</div>
+            <div class="menu-trigger wall-horizontal shelf" style="bottom: 0; left: 45%;" data-menu="bottom2" data-category="Lights">Lights</div>
+            <div class="menu-trigger wall-horizontal shelf" style="bottom: 0; left: 35%; background-color: orange;" data-menu="bottom3" data-category="Multimedia, AC">Sandbags</div>
+            <div class="menu-trigger wall-horizontal shelf" style="bottom: 0; left: 60%;" data-menu="bottom3" data-category="Multimedia, AC">Tablets, Mini-Projectors, Laptops, Tablets</div>
+        </div>
+
+        <div id="info-panel">
+            <div class="menu-path"></div>
+            <div class="category-name"></div>
+            <div id="current-menu"></div>
+        </div>
+    </div>
+
+<script src="./room.js">
+       
+    </script> 
+</html>

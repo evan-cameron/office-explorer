@@ -1,0 +1,308 @@
+body {
+    margin: 0;
+    padding: 10px;
+    min-height: 100vh;
+    background: #f0f0f0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    overflow: hidden;
+    /* height:30vh; */
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 90%;
+    gap: 20px;
+}
+
+#instructions {
+    padding: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.wall-vertical {
+    width: 25px;
+    height: 60px;
+}
+
+/* Room elements */
+#table-original,
+#rectangle,
+#tv,
+#table-computer,
+#computer,
+#fridge,
+#light-stand-cabinet,
+.menu-trigger {
+    position: absolute;
+    box-sizing: border-box;
+}
+
+.wall-horizontal {
+    width: 60px;
+    height: 25px;
+}
+/*  */
+#table-original {
+    position: absolute;
+    left: 25%;
+    top: 45%;
+    width: 100px;
+    height: 170px;
+    background: #8b4513;
+    left: 15%;
+    top: 45%;
+    width: 12%;
+    height: 25%;
+    background: #8b4513;
+    grid-area: 1 / 1 / span 2 / span 2;
+    background: #8b4513;
+}
+
+#tv {
+    left: calc(27% + 3%);
+    top: calc(43% + 5%);
+    width: 7%;
+    height: 18%;
+    background: #333;
+    grid-area: 1 / 5 / span 1 / span 1;
+    background: #333;
+}
+
+#computer {
+    position: absolute;
+    right: 15px;
+    top: calc(45% + 15px);
+    width: 70px;
+    height: 20px;
+    background: #373737;
+    grid-area: 3 / 3 / span 1 / span 1;
+    background: #373737;
+}
+
+#fridge {
+    left: 0;
+    top: 40%;
+    width: 5%;
+    height: 11%;
+    background: white;
+    border: 2px solid #0066cc;
+    grid-area: 3 / 5 / span 1 / span 1;
+    background: white;
+    border: 2px solid #0066cc;
+
+}
+
+#light-stand-cabinet {
+    grid-area: 4 / 1 / span 1 / span 1;
+    background: #888;
+    border: 2px solid #444;
+}
+
+#office-1 {
+    position: absolute;
+    top: 0;
+    left: 55%;
+    width: 60px;
+    height: 25px;
+    background: #888;
+    border: 2px solid #444;
+}
+
+#office-2 {
+    position: absolute;
+    top: 0;
+    left: 405%;
+    width: 60px;
+    height: 25px;
+    background: #888;
+    border: 2px solid #444;
+}
+
+.wall-vertical {
+    width: 25px;
+    height: 60px;
+}
+
+.wall-horizontal {
+    width: 60px;
+    height: 25px;
+}
+
+.shelf {
+    width: 13%;
+    height: 10%;
+}
+
+.v-shelf {
+    height: 20%;
+    width: 8%;
+}
+
+
+/* Update the left menu position */
+.menu-trigger[data-menu="left1"] {
+    left: 0;
+    bottom: 10%;
+}
+ 
+body {
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    background: #f0f0f0;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+#room {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border: 2px solid #333;
+    z-index: 1;
+}
+
+#info-panel {
+    position: absolute;
+    right: 110px;
+    top: 75px;
+    width: 30%;
+    height: calc(70vh - 40px);
+    background: ;
+    border: 2px solid #333;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 1;
+    opacity: 0.5;
+}
+
+#player {
+    width: 30px;
+    height: 30px;
+    background: red;
+    position: absolute;
+    transition: all 0.1s;
+    z-index: 100;
+}
+
+.menu-trigger {
+    position: absolute;
+    background: rgba(0, 255, 0, 0.2);
+    border: 2px solid #0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    text-align: center;
+    z-index: 3;
+}
+
+/* Keep existing menu trigger positioning classes */
+.wall-vertical {
+    width: 25px;
+    height: 60px;
+}
+
+.wall-horizontal {
+    width: 60px;
+    height: 25px;
+}
+
+.shelf {
+    width: 13%;
+    height: 10%;
+    max-width: 150px;
+    max-height: 80px;
+}
+
+.v-shelf {
+    height: 20%;
+    width: 8%;
+    max-width: 80px;
+    max-height: 150px;
+}
+
+/* Update room elements to use percentage-based positioning */
+#table-original {
+    position: absolute;
+    left: 25%;
+    top: 45%;
+    width: 12%;
+    height: 35%;
+    background: #8b4513;
+}
+
+#rectangle {
+    position: absolute;
+    left: 10%;
+    top: 15%;
+    width: 35%;
+    height: 25%;
+    border: 2px orange solid;
+}
+
+#tv {
+    position: absolute;
+    left: calc(27% + 3%);
+    top: calc(43% + 5%);
+    width: 7%;
+    height: 18%;
+    background: #333;
+}
+
+#table-computer {
+    position: absolute;
+    right: 0%;
+    top: 45%;
+    width: 13%;
+    height: 15%;
+    background: #8b4513;
+}
+
+#computer {
+    position: absolute;
+    right: calc(0.03% + 0.4%);
+    top: calc(47% + 2%);
+    width: 7%;
+    height: 5%;
+    background: #373737;
+}
+
+
+.equipment-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.equipment-list li {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+.equipment-list li.selected {
+    background-color: #e0e0ff;
+    border-left: 4px solid #0066cc;
+}
+
+.equipment-list li:hover {
+    background: #f0f0f0;
+}
+
+.category-name {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
