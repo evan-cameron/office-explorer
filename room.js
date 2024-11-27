@@ -8,7 +8,6 @@ let currentPath = [];
 let currentMenuItems = [];
 let selectedItemIndex = -1;
 
-
 // Set initial player position in front of computer desk
 const playerStartX = computerDesk.offsetLeft + (computerDesk.offsetWidth / 2) - 10;
 const playerStartY = computerDesk.offsetTop + computerDesk.offsetHeight + 30;
@@ -18,12 +17,10 @@ let playerY = playerStartY;
 player.style.left = `${playerX}px`;
 player.style.top = `${playerY}px`;
 
-const speed = 2.8; // Reduced speed
+const speed = 2.8; 
 const keys = {};
 
 let currentSubItems = [];
-
-
 
 const menuData = {
     fridge: {
@@ -216,80 +213,111 @@ function updateMenuState() {
 }
 
 function navigateMenu(direction) {
-if (direction === 'forward') {
-const currentItem = menuLevel === 0 ? 
-    currentMenuItems[selectedItemIndex] : 
-    currentMenuItems[selectedItemIndex]?.items?.[selectedItemIndex];
+    if (!menuMode) return;
 
-if (currentItem?.items && menuLevel < 2) {
-    menuLevel++;
-    currentPath.push(currentItem.name);
-    
-    if (menuLevel === 1) {
-        currentSubItems = currentItem.items;
+    const items = document.querySelectorAll('.equipment-list li');
+    if (items.length === 0) return;
+
+    if (selectedItemIndex >= 0 && selectedItemIndex < items.length) {
+        items[selectedItemIndex].classList.remove('selected');
     }
-    
-    selectedItemIndex = 0;
-    renderCurrentLevel();
+
+    if (direction === 'up') {
+        selectedItemIndex = (selectedItemIndex - 1 + items.length) % items.length;
+    } else if (direction === 'down') {
+        selectedItemIndex = (selectedItemIndex + 1) % items.length;
+    }
+
+    items[selectedItemIndex].classList.add('selected');
+    items[selectedItemIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    if (menuLevel === 1) {
+        const selectedItem = currentMenuItems[selectedItemIndex];
+        if (selectedItem && selectedItem.items) {
+            currentSubItems = selectedItem.items;
+        }
+    }
 }
-} else if (direction === 'back') {
-if (menuLevel > 0) {
-    menuLevel--;
-    currentPath.pop();
-    selectedItemIndex = 0;
-    renderCurrentLevel();
-} else {
-    toggleMenuMode();
+
+// Function to add item to the order
+function addToOrder(item) {
+    const orderDiv = document.getElementById('order');
+    const itemDiv = document.createElement('div');
+    itemDiv.textContent = item.name;
+    orderDiv.appendChild(itemDiv);
 }
-}
+
+// Function to open about window
+function openAboutWindow(item) {
+    const aboutWindow = window.open('', '_blank', 'width=400,height=400');
+    if (aboutWindow) {
+        aboutWindow.document.write(`
+            <html>
+            <head>
+                <title>About ${item.name}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                    .add-button { margin-top: 20px; cursor: pointer; background: #0066cc; color: #fff; border: none; padding: 10px 20px; text-align: center; text-decoration: none; font-size: 14px; border-radius: 5px; }
+                </style>
+            </head>
+            <body>
+                <h1>${item.name}</h1>
+                <p>${item.description}</p>
+                <button class="add-button" onclick="window.opener.addToOrder(${JSON.stringify(item)})">Add to Order</button>
+            </body>
+            </html>
+        `);
+        aboutWindow.document.close();
+    }
 }
 
 function renderCurrentLevel() {
-let html = '';
+    let html = '';
 
-// Show breadcrumb navigation
-if (currentPath.length > 0) {
-html += `<div class="breadcrumb">${currentPath.join(" > ")}</div>`;
-}
+    if (currentPath.length > 0) {
+        html += `<div class="breadcrumb">${currentPath.join(" > ")}</div>`;
+    }
 
-// Determine which items to display based on menu level
-let itemsToDisplay = [];
-if (menuLevel === 0) {
-itemsToDisplay = currentMenuItems;
-} else if (menuLevel === 1) {
-itemsToDisplay = currentMenuItems[selectedItemIndex]?.items || [];
-} else if (menuLevel === 2) {
-// Display detailed view of selected item
-const selectedItem = currentMenuItems[selectedItemIndex]?.items?.[selectedItemIndex];
-if (selectedItem) {
-    html += `
-        <div class="equipment-details">
-            <h2>${selectedItem.name}</h2>
-            ${selectedItem.description ? `<p>${selectedItem.description}</p>` : ''}
-            ${selectedItem.tag ? `<p>Equipment Tag: ${selectedItem.tag}</p>` : ''}
-        </div>
+    let itemsToDisplay = [];
+    if (menuLevel === 0) {
+        itemsToDisplay = currentMenuItems;
+    } else if (menuLevel === 1) {
+        itemsToDisplay = currentMenuItems[selectedItemIndex]?.items || [];
+    } else if (menuLevel === 2) {
+        const selectedItem = currentMenuItems[selectedItemIndex]?.items?.[selectedItemIndex];
+        if (selectedItem) {
+            html += `
+        <ul class="equipment-list">
+            ${itemsToDisplay.map((item, index) => `
+                <li class="${index === selectedItemIndex ? 'selected' : ''}" data-index="${index}">
+                    ${item.name}
+                    ${item.items ? ' ▶' : ''}
+                    <button class="add-button" onclick="addToOrder(${JSON.stringify(item)})">Add</button>
+                    <button class="about-button" onclick="openAboutWindow(${JSON.stringify(item)})">About</button>
+                </li>
+            `).join('')}
+        </ul>
     `;
-}
-}
+    document.getElementById('current-menu').innerHTML = html;
+        }
+    }
 
-// If not in detailed view, show list of items
-if (menuLevel < 2) {
-html += `
-    <ul class="equipment-list">
-        ${itemsToDisplay.map((item, index) => `
-            <li class="${index === selectedItemIndex ? 'selected' : ''}" 
-                data-index="${index}">
-                ${item.name}
-                ${item.items ? ' ▶' : ''}
-            </li>
-        `).join('')}
-    </ul>
-`;
-}
+    if (menuLevel < 2) {
+        html += `
+            <ul class="equipment-list">
+                ${itemsToDisplay.map((item, index) => `
+                    <li class="${index === selectedItemIndex ? 'selected' : ''}" 
+                        data-index="${index}">
+                        ${item.name}
+                        ${item.items ? ' ▶' : ''}
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+    }
 
-document.getElementById('current-menu').innerHTML = html;
+    document.getElementById('current-menu').innerHTML = html;
 }
-
 
 function updateInfoPanel(menuId, showItems = false) {
     if (!menuData[menuId]) return;
@@ -303,74 +331,22 @@ function updateInfoPanel(menuId, showItems = false) {
         renderCurrentLevel();
     }
 }
-    let html = '';
-     // Show breadcrumb navigation
-     if (currentPath.length > 0) {
-        html += `<div class="breadcrumb">
-            ${currentPath.join(" > ")}
-        </div>`;
-    }
-     // If we're showing item details
-     if (menuLevel === 2) {
-        const item = currentMenuItems[selectedItemIndex];
-        html += `
-            <div class="equipment-details">
-                <h2>${item.name}</h2>
-                <p>${item.description}</p>
-                ${item.specs ? `
-                    <h3>Specifications:</h3>
-                    <ul>
-                        ${Object.entries(item.specs).map(([key, value]) => 
-                            `<li>${key}: ${value}</li>`
-                        ).join('')}
-                    </ul>
-                ` : ''}
-                ${item.tag ? `<p>Equipment Tag: ${item.tag}</p>` : ''}
-            </div>
-        `;
-    } else {
-        // Show list of items
-        html += `
-            <ul class="equipment-list">
-                ${currentMenuItems.map((item, index) => `
-                    <li class="${index === selectedItemIndex ? 'selected' : ''}" 
-                        data-index="${index}">
-                        ${item.name}
-                    </li>
-                `).join('')}
-            </ul>
-        `;
-    }
-    
-    document.getElementById('current-menu').innerHTML = html;
-
 
 function toggleMenuMode(menuId) {
     menuMode = !menuMode;
+    menuLevel = menuMode ? 0 : 0;
+    currentPath = [];
+    updateMenuState();
+
     if (menuMode) {
         updateInfoPanel(menuId, true);
+        selectedItemIndex = 0;
     } else {
         selectedItemIndex = -1;
         currentMenuItems = [];
+        currentSubItems = [];
         document.getElementById('current-menu').innerHTML = '';
     }
-}
-
-function toggleMenuMode(menuId) {
-menuMode = !menuMode;
-menuLevel = menuMode ? 0 : 0;
-currentPath = [];
-updateMenuState();
-
-if (menuMode) {
-updateInfoPanel(menuId, true);
-selectedItemIndex = 0;
-} else {
-selectedItemIndex = -1;
-currentMenuItems = [];
-currentSubItems = [];
-document.getElementById('current-menu').innerHTML = '';
-}
 }
 
 function checkMenuInteraction() {
@@ -393,7 +369,6 @@ function checkMenuInteraction() {
     });
 }
 
-
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
     
@@ -407,102 +382,16 @@ document.addEventListener('keydown', (e) => {
     }
     
     if (menuMode) {
-        if (e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') selectMenuItem('up');
-        if (e.key === 'ArrowDown' || e.key.toLowerCase() === 's') selectMenuItem('down');
+        if (e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') navigateMenu('up');
+        if (e.key === 'ArrowDown' || e.key.toLowerCase() === 's') navigateMenu('down');
         e.preventDefault();
     }
 });
-
 
 document.addEventListener('keyup', (e) => {
     keys[e.key] = false;
 });
 
-function selectMenuItem(direction) {
-    if (!menuMode || currentMenuItems.length === 0) return;
-    
-    const items = document.querySelectorAll('.equipment-list li');
-    items[selectedItemIndex].classList.remove('selected');
-    
-    if (direction === 'up') selectedItemIndex = (selectedItemIndex - 1 + items.length) % items.length;
-    if (direction === 'down') selectedItemIndex = (selectedItemIndex + 1) % items.length;
-    
-    items[selectedItemIndex].classList.add('selected');
-    items[selectedItemIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function selectMenuItem(direction) {
-if (!menuMode || currentMenuItems.length === 0) return;
-
-const items = document.querySelectorAll('.equipment-list li');
-if (items.length === 0) return;
-
-// Remove current selection
-if (selectedItemIndex >= 0 && selectedItemIndex < items.length) {
-items[selectedItemIndex].classList.remove('selected');
-}
-
-// Update selection index
-if (direction === 'up') {
-selectedItemIndex = (selectedItemIndex - 1 + items.length) % items.length;
-} else if (direction === 'down') {
-selectedItemIndex = (selectedItemIndex + 1) % items.length;
-}
-
-// Apply new selection
-items[selectedItemIndex].classList.add('selected');
-items[selectedItemIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-// If we're in a submenu, update the current item's details
-if (menuLevel === 1) {
-const selectedItem = currentMenuItems[selectedItemIndex];
-if (selectedItem && selectedItem.items) {
-    currentSubItems = selectedItem.items;
-}
-}
-}   
-
-// function update() {
-//     if (!menuMode) {
-//         if (keys['ArrowLeft'] || keys['a'] || keys['A']) playerX -= speed;
-//         if (keys['ArrowRight'] || keys['d'] || keys['D']) playerX += speed;
-//         if (keys['ArrowUp'] || keys['w'] || keys['W']) playerY -= speed;
-//         if (keys['ArrowDown'] || keys['s'] || keys['S']) playerY += speed;
-
-//         playerX = Math.max(0, Math.min(room.offsetWidth - player.offsetWidth, playerX));
-//         playerY = Math.max(0, Math.min(room.offsetHeight - player.offsetHeight, playerY));
-
-//         player.style.left = `${playerX}px`;
-//         player.style.top = `${playerY}px`;
-
-//         const menuTriggers = document.querySelectorAll('.menu-trigger');
-//         let nearMenu = false;
-        
-//         menuTriggers.forEach(trigger => {
-//             const rect = trigger.getBoundingClientRect();
-//             const playerRect = player.getBoundingClientRect();
-//             const distance = Math.hypot(
-//                 (rect.left + rect.width/2) - (playerRect.left + playerRect.width/2),
-//                 (rect.top + rect.height/2) - (playerRect.top + playerRect.height/2)
-//             );
-
-//             if (distance < 50) {
-//                 nearMenu = true;
-//                 const menuId = trigger.getAttribute('data-menu');
-//                 updateInfoPanel(menuId);
-//             }
-//         });
-
-//         if (!nearMenu) {
-//             document.querySelector('.category-name').textContent = '';
-//             document.getElementById('current-menu').innerHTML = '';
-//         }
-//     }
-
-//     requestAnimationFrame(update);
-// }
-
-// Update player movement constraints to use window boundaries
 function update() {
     if (!menuMode) {
         if (keys['ArrowLeft'] || keys['a'] || keys['A']) playerX -= speed;
@@ -510,8 +399,7 @@ function update() {
         if (keys['ArrowUp'] || keys['w'] || keys['W']) playerY -= speed;
         if (keys['ArrowDown'] || keys['s'] || keys['S']) playerY += speed;
 
-        // Use window dimensions instead of room dimensions for boundaries
-        const maxWidth = window.innerWidth - player.offsetWidth - 40; // Account for padding
+        const maxWidth = window.innerWidth - player.offsetWidth - 40; 
         const maxHeight = window.innerHeight - player.offsetHeight - 40;
 
         playerX = Math.max(0, Math.min(maxWidth, playerX));
@@ -547,105 +435,8 @@ function update() {
     requestAnimationFrame(update);
 }
 
-// Add mouse event listeners to menu triggers
 document.querySelectorAll('.menu-trigger').forEach(trigger => {
-    trigger.addEventListener('mouseenter', () => {
-        const menuId = trigger.getAttribute('data-menu');
-        updateInfoPanel(menuId, true);
-    });
+    trigger.removeEventListener('mouseenter', () => {});
 });
-
-// Modify the existing updateInfoPanel function to handle detailed item view
-function updateInfoPanel(menuId, showItems = false) {
-    if (!menuData[menuId]) return;
-    
-    const trigger = document.querySelector(`[data-menu="${menuId}"]`);
-    const categoryName = trigger.getAttribute('data-category');
-    document.querySelector('.category-name').textContent = categoryName;
-    
-    if (showItems) {
-        let html = '';
-        const items = menuData[menuId].items;
-        
-        html += `<ul class="equipment-list">`;
-        items.forEach((item, index) => {
-            html += `
-                <li class="equipment-item" data-index="${index}">
-                    <div class="item-header">
-                        ${item.name}
-                        ${item.items ? '<span class="expand-icon">▶</span>' : ''}
-                    </div>
-                    ${item.items ? `
-                        <div class="item-details hidden">
-                            <ul>
-                                ${item.items.map((subItem, subIndex) => `
-                                    <li class="sub-item" data-index="${subIndex}">
-                                        <div class="sub-item-header">
-                                            ${subItem.name}
-                                        </div>
-                                        <div class="sub-item-details hidden">
-                                            ${subItem.description || ''}
-                                            ${subItem.tag ? `<div>Tag: ${subItem.tag}</div>` : ''}
-                                            <button class="add-item-btn" data-item='${JSON.stringify(subItem)}'>
-                                                Add to Selection
-                                            </button>
-                                        </div>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
-                    ` : ''}
-                </li>
-            `;
-        });
-        html += '</ul>';
-        
-        document.getElementById('current-menu').innerHTML = html;
-
-           // Add click handlers for expandable items
-           document.querySelectorAll('.equipment-item').forEach(item => {
-            item.querySelector('.item-header')?.addEventListener('click', () => {
-                const details = item.querySelector('.item-details');
-                if (details) {
-                    details.classList.toggle('hidden');
-                    const icon = item.querySelector('.expand-icon');
-                    if (icon) {
-                        icon.textContent = details.classList.contains('hidden') ? '▶' : '▼';
-                    }
-                }
-            });
-        });
-        
-        // Add click handlers for sub-items
-        document.querySelectorAll('.sub-item-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const details = header.nextElementSibling;
-                if (details) {
-                    details.classList.toggle('hidden');
-                }
-            });
-        });
-        
-        // Add handlers for Add buttons
-        document.querySelectorAll('.add-item-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const itemData = JSON.parse(e.target.dataset.item);
-                addToRectangle(itemData);
-            });
-        });
-    }
-}
-
-
-// add items to the rectangle
-function addToRectangle(item) {
-    const rectangle = document.getElementById('rectangle');
-    const itemElement = document.createElement('div');
-    itemElement.className = 'selected-item';
-    itemElement.textContent = item.name;
-    rectangle.appendChild(itemElement);
-}
-
-
 
 update();
